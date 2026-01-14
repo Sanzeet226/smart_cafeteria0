@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  </head>
+  <body>
+    <h2>Admin Dashboard</h2>
+
+    <table border="1" id="orders">
+      <tr>
+        <th>Token</th>
+        <th>Name</th>
+        <th>Shift</th>
+        <th>Total</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </table>
+
+    <script>
+      const socket = io("http://localhost:3000");
+
+      function loadOrders() {
+        fetch("http://localhost:3000/orders")
+          .then((res) => res.json())
+          .then((data) => {
+            const table = document.getElementById("orders");
+            table.innerHTML = table.rows[0].outerHTML;
+            data.forEach((o) => {
+              table.innerHTML += `
+          <tr>
+            <td>${o.token}</td>
+            <td>${o.student_name}</td>
+            <td>${o.shift}</td>
+            <td>${o.total}</td>
+            <td>${o.status}</td>
+            <td>
+              ${
+                o.status === "Pending"
+                  ? `<button onclick="serve(${o.id})">Serve</button>`
+                  : ""
+              }
+            </td>
+          </tr>`;
+            });
+          });
+      }
+
+      function serve(id) {
+        fetch("http://localhost:3000/serve/" + id, { method: "PUT" });
+      }
+
+      socket.on("newOrder", loadOrders);
+      socket.on("update", loadOrders);
+
+      loadOrders();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sign Up | HSM Cafeteria</title>
+  </head>
+  <body>
+    <link rel="stylesheet" href="auth.css" />
+
+    <div class="auth-container">
+      <h2>Create Account</h2>
+
+      <div class="auth-form">
+        <input id="username" placeholder="Username" />
+        <input id="password" type="password" placeholder="Password" />
+        <button onclick="signup()">Sign Up</button>
+      </div>
+
+      <div class="auth-links">
+        <a href="login.html">Back to Login</a>
+      </div>
+    </div>
+
+    <script>
+      function signup() {
+        const u = username.value;
+        const p = password.value;
+
+        if (localStorage.getItem(u)) {
+          alert("User already exists!");
+          return;
+        }
+
+        localStorage.setItem(u, JSON.stringify({ username: u, password: p }));
+        alert("Account created! Please login.");
+        window.location.href = "login.html";
+      }
+    </script>
+  </body>
+</html>

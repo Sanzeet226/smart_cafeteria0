@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HSM-CAFETERIA</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="shortcut icon" href="hsm1.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <div class="container">
+      <h1 style="color: rgb(36, 117, 165)">HSM-CAFETERIA</h1>
+
+      <form id="orderForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="studentID">Student ID:</label>
+        <input type="text" id="studentID" name="studentID" required />
+
+        <fieldset>
+          <legend>Select Your Shift:</legend>
+          <label>
+            <input type="radio" name="shift" value="Morning" required /> Morning
+          </label>
+          <label>
+            <input type="radio" name="shift" value="Evening" required /> Evening
+          </label>
+        </fieldset>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Price</th>
+              <th>Quantity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input type="checkbox" id="samosa" value="25" /> Samosa
+                <img
+                  src="https://thecookingfoodie.com/wp-content/uploads/2020/04/IMG_4128-2.jpg"
+                  alt="Samosa"
+                />
+              </td>
+              <td>25</td>
+              <td>
+                <input
+                  type="number"
+                  id="qty-samosa"
+                  placeholder="0"
+                  min="0"
+                  max="10"
+                  oninput="autoCheckCheckbox('samosa')"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <input type="checkbox" id="pakoda" value="10" /> Pakoda
+                <img
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNnX0iqYh7kAwHmhIA_5o8mdfszYbMbPbLbw&s"
+                  alt="Pakoda"
+                />
+              </td>
+              <td>10</td>
+              <td>
+                <input
+                  type="number"
+                  id="qty-pakoda"
+                  placeholder="0"
+                  min="0"
+                  max="10"
+                  oninput="autoCheckCheckbox('pakoda')"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <input type="checkbox" id="chaat" value="60" /> Chaat
+                <img
+                  src="https://www.madhuseverydayindian.com/wp-content/uploads/2021/05/chana-chaat-with-yogurt.jpg"
+                  alt="Chaat"
+                />
+              </td>
+              <td>60</td>
+              <td>
+                <input
+                  type="number"
+                  id="qty-chaat"
+                  placeholder="0"
+                  min="0"
+                  max="10"
+                  oninput="autoCheckCheckbox('chaat')"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <input type="checkbox" id="momo" value="80" /> Momo
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Momo_nepal.jpg/640px-Momo_nepal.jpg"
+                  alt="Momo"
+                />
+              </td>
+              <td>80</td>
+              <td>
+                <input
+                  type="number"
+                  id="qty-momo"
+                  placeholder="0"
+                  min="0"
+                  max="5"
+                  oninput="autoCheckCheckbox('momo')"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" onclick="calculateTotal()">
+          Calculate Total
+        </button>
+        <p class="total" id="total-price">Total Price: 0</p>
+        <button type="button" onclick="submitOrder()">Submit Your Order</button>
+        <div id="queue-info" class="queue-info"></div>
+        <p id="order-token"></p>
+        <!-- Display the token here -->
+        <button class="logout" onclick="logout()">Logout</button>
+      </form>
+    </div>
+
+    <script>
+      if (!localStorage.getItem("loggedInUser")) {
+        window.location.href = "login.html";
+      }
+
+      // Get the current order number from localStorage or set it to 1 if not available
+      let currentOrderNumber = localStorage.getItem("orderNumber");
+      if (!currentOrderNumber) {
+        currentOrderNumber = 1; // Start the order number at 1
+      } else {
+        currentOrderNumber = parseInt(currentOrderNumber);
+      }
+
+      // Function to increment and save the order number
+      function incrementOrderNumber() {
+        currentOrderNumber++;
+        localStorage.setItem("orderNumber", currentOrderNumber); // Save updated order number
+      }
+
+      // Auto-check checkbox when quantity > 0
+      function autoCheckCheckbox(itemId) {
+        const qty = parseInt(document.getElementById(`qty-${itemId}`).value);
+        const checkbox = document.getElementById(itemId);
+
+        if (qty > 0) {
+          checkbox.checked = true; // Auto check the checkbox
+        } else {
+          checkbox.checked = false;
+        }
+      }
+
+      function calculateTotal() {
+        let total = 0;
+        const items = document.querySelectorAll(
+          'input[type="checkbox"]:checked'
+        );
+
+        items.forEach((item) => {
+          const price = parseInt(item.value);
+          const qtyInput = document.getElementById(`qty-${item.id}`);
+          const qty = qtyInput ? parseInt(qtyInput.value) : 0; // Get the value of quantity, default to 0 if not set
+          if (qty && qty >= 0) {
+            total += price * qty;
+          }
+        });
+
+        document.getElementById(
+          "total-price"
+        ).textContent = `Total Price: ${total}`;
+      }
+
+      function submitOrder() {
+        const name = document.getElementById("name").value;
+        const studentID = document.getElementById("studentID").value;
+        const shiftSelected = document.querySelector(
+          'input[name="shift"]:checked'
+        );
+
+        if (!name || !studentID || !shiftSelected) {
+          alert(
+            "Please fill in all the fields: Name, Student ID, and Select Shift."
+          );
+          return;
+        }
+
+        const form = document.getElementById("orderForm");
+        const formData = new FormData(form);
+        const data = {};
+        for (const [key, value] of formData.entries()) {
+          data[key] = value;
+        }
+        const items = document.querySelectorAll(
+          'input[type="checkbox"]:checked'
+        );
+        const orderItems = [];
+        items.forEach((item) => {
+          const qty = parseInt(document.getElementById(`qty-${item.id}`).value);
+          if (qty > 0) {
+            orderItems.push({
+              item: item.id,
+              qty,
+            });
+          }
+        });
+        data.items = orderItems;
+
+        const currentTime = new Date();
+        const hour = currentTime.getHours();
+        const studentShift = formData.get("shift");
+        let cutOffTime = studentShift === "Morning" ? 7 : 13;
+        if (hour < cutOffTime) {
+          const token = Math.random().toString(36).substring(2, 15);
+          document.getElementById(
+            "order-token"
+          ).textContent = `Your Order Token: ${currentOrderNumber}`;
+
+          incrementOrderNumber();
+
+          form.reset();
+          document.getElementById("total-price").textContent = "Total Price: 0";
+          document.getElementById("queue-info").textContent =
+            "Your order has been submitted successfully!";
+        } else {
+          document.getElementById(
+            "queue-info"
+          ).innerText = `Sorry, you can no longer order. The cut-off time was ${
+            cutOffTime === 7 ? "7 AM" : "1 PM"
+          }.`;
+        }
+      }
+      function logout() {
+        localStorage.removeItem("loggedInUser"); // clear session
+        window.location.href = "login.html"; // redirect to sign-in
+      }
+      if (!localStorage.getItem("loggedInUser")) {
+        window.location.href = "login.html";
+      }
+    </script>
+  </body>
+</html>

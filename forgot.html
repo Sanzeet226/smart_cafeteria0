@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Forgot Password | HSM Cafeteria</title>
+  </head>
+  <body>
+    <link rel="stylesheet" href="auth.css" />
+
+    <div class="auth-container">
+      <h2>Reset Password</h2>
+
+      <div class="auth-form">
+        <input id="username" placeholder="Username" />
+        <input id="newpass" type="password" placeholder="New Password" />
+        <button onclick="reset()">Reset Password</button>
+      </div>
+
+      <div class="auth-links">
+        <a href="login.html">Back to Login</a>
+      </div>
+    </div>
+
+    <script>
+      function reset() {
+        const u = username.value;
+        const np = newpass.value;
+
+        const user = JSON.parse(localStorage.getItem(u));
+        if (!user) {
+          alert("User not found");
+          return;
+        }
+
+        user.password = np;
+        localStorage.setItem(u, JSON.stringify(user));
+        alert("Password reset successful");
+        window.location.href = "login.html";
+      }
+    </script>
+  </body>
+</html>

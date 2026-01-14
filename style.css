@@ -1,0 +1,76 @@
+body {
+  background: linear-gradient(135deg, #2475a5, #4facfe);
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 850px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: #2475a5;
+  color: #fff;
+  padding: 10px;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+button {
+  background: #2475a5;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1c5d84;
+}
+
+/* 🔥 SAME SIZE FOOD IMAGES */
+td img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-left: 10px;
+}
+
+/* Total & token */
+.total,
+#order-token {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2475a5;
+}
+.logout {
+  float: right;
+  background: crimson;
+}
+.logout-btn {
+  float: right;
+  background: #e63946;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background: #c92c3a;
+}
